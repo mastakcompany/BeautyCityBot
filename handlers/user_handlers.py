@@ -4,8 +4,8 @@ from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
-from config_data.config import my_table
 from keyboards import user_keyboards
+from keyboards.user_keyboards import start_keyboard
 from lexicon.lexicon_ru import LEXICON_RU
 from aiogram3_calendar import DialogCalendar, dialog_cal_callback
 
@@ -49,8 +49,9 @@ class GetUserInfo(StatesGroup):
 
 # Этот хэндлер срабатывает на команду /start
 @router.message(CommandStart())
-async def process_start_command(message: Message):
+async def process_admin_command(message: Message):
     await message.answer(
-        text=LEXICON_RU['/start'],
-        reply_markup=user_keyboards.start_keyboard()
+        text="Добро пожаловать!",
+        reply_markup=start_keyboard()
     )
+

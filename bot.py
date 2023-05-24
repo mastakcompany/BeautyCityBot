@@ -3,7 +3,7 @@ import logging
 
 from aiogram import Bot, Dispatcher, types
 
-from config_data.config import load_config, my_table, links_table
+from config_data.config import load_config
 from handlers import user_handlers, admin_handlers, other_handlers
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,6 @@ async def main():
 
     bot = Bot(config.tg_bot.token, parse_mode="HTML")
     dp = Dispatcher()
-    my_table.create_table()
 
     dp.include_router(user_handlers.router)
     dp.include_router(admin_handlers.router)
@@ -42,10 +41,6 @@ async def set_main_menu(bot: Bot):
             types.BotCommand(
                 command="/support",
                 description="Поддержка"
-            ),
-            types.BotCommand(
-                command="/admin",
-                description="Управление"
             ),
 
         ]

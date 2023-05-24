@@ -26,7 +26,7 @@ class TgBot:
 @dataclass
 class Config:
     tg_bot: TgBot
-    db: DatabaseConfig
+    # db: DatabaseConfig
     admin_ids: AdminIds
 
 
@@ -36,7 +36,7 @@ def load_config() -> Config:
 
     return Config(
         tg_bot=TgBot(token=env('BOT_TOKEN')),
-        db=DatabaseConfig(database=env('DATABASE_NAME')),
+        # db=DatabaseConfig(database=env('DATABASE_NAME')),
         admin_ids=AdminIds(ids_list=env('ADMIN_IDS')),
     )
 
@@ -59,5 +59,3 @@ class Users(Table):
     is_processed: str  # Обработанный заказ True. Новый False
     date: str  # Дата самостоятельной доставки клиентом
 
-
-my_table = Users(db_path=load_config().db.database)

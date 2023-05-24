@@ -26,4 +26,3 @@ class GetCellNumber(StatesGroup):
 @router.message(Command(commands=['admin']))
 async def process_admin_command(message: Message):
     pass
-

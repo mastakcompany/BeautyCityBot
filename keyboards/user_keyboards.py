@@ -8,8 +8,9 @@ from aiogram.types import (
 
 def start_keyboard():
     buttons_data = [
-        ('template', 'template'),
-        ('template', 'template')
+        ('Хочу записать', 'Выбрать мастера'),
+        ('Отзывы', 'О нас'),
+        ('Позвонить нам',)
     ]
 
     return ReplyKeyboardMarkup(
