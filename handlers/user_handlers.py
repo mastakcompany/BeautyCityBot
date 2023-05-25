@@ -1,50 +1,20 @@
 from aiogram import Router
-from aiogram.filters import Command, CommandStart, Text
-from aiogram.types import Message, CallbackQuery, FSInputFile
+from aiogram.filters import CommandStart, Text
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram3_calendar import SimpleCalendar, simple_cal_callback
 
-from keyboards import user_keyboards
-from keyboards.user_keyboards import start_keyboard
-from lexicon.lexicon_ru import LEXICON_RU
-from aiogram3_calendar import DialogCalendar, dialog_cal_callback
-
-from database import database_funcs
-
+from keyboards.user_keyboards import start_keyboard, get_new_entry_keyboard
 
 router = Router()
 
 
-class MyCellsState(StatesGroup):
-    cell_number = State()
-    all_things = State()  # True клиент заберет все вещи, если часть - False
-
-
-class GetUserInfo(StatesGroup):
-    new_user = State()
-    weight = State()
-    dimension = State()
-    rental_period = State()
-    phone = State()
-    deliver = State()
-    yourself_delivery = State()
-    courier_delivery = State()
-    address = State()
-
-
-'''
-Что сохраняем в БД:
-
-'user_id': 'telegram_id',
-'weight': масса вещей,
-'cell_size': значение габаритов ячейки, если клиент не хочет сам мерять то False,
-'storage_time': срок аренды ячейки,
-'phone': user_phone,
-'yourself': Bool,
-'address': user_address, если пустое, то клиент сам привезет свои вещи,
-'is_processed': обработан ли заказ (True) или это новый (False),
-'cell_number': номера ячеек хранения,
-'''
+class NewEntry(StatesGroup):
+    procedure_name = State()
+    procedure_date = State()
+    procedure_time = State()
+    procedure_specialist = State()
 
 
 # Этот хэндлер срабатывает на команду /start
@@ -54,4 +24,51 @@ async def process_admin_command(message: Message):
         text="Добро пожаловать!",
         reply_markup=start_keyboard()
     )
+
+
+@router.message(Text(startswith=["Хочу записать"]))
+async def get_new_entry(message: Message, state: FSMContext):
+    await message.answer(
+        text="Выберите процедуру, пожалуйста 💁‍♀️",
+        reply_markup=get_new_entry_keyboard()
+    )
+
+    await state.set_state(NewEntry.procedure_name)
+
+
+@router.callback_query(Text(startswith=["procedure"]), NewEntry.procedure_name)
+async def get_procedure_name(callback: CallbackQuery, state: FSMContext):
+    procedure_name = callback.data
+    await state.update_data(procedure_name=procedure_name)
+
+    await callback.message.edit_text(
+        text="Выберите дату, пожалуйста:",
+        reply_markup=await SimpleCalendar.start_calendar()
+    )
+    await state.set_state(NewEntry.procedure_date)
+    await callback.answer()
+
+
+@router.callback_query(simple_cal_callback.filter(), NewEntry.procedure_date)
+async def get_procedure_date(callback: CallbackQuery, callback_data, state: FSMContext):
+    selected, date = await SimpleCalendar().process_selection(callback, callback_data)
+    if selected:
+        procedure_date = date.strftime("%d/%m/%Y")
+        await state.update_data(procedure_date=procedure_date)
+    await callback.message.edit_text(
+        text="Выберите время, пожадуйста:"
+    )
+    await state.set_state(NewEntry.procedure_time)
+    await callback.answer()
+
+
+@router.callback_query(NewEntry.procedure_time)
+async def get_procedure_time(callback: CallbackQuery, state: FSMContext):
+    pass
+
+
+@router.callback_query(Text(startswith=["specialist"]), NewEntry.procedure_specialist)
+async def get_procedure_specialist(callback: CallbackQuery, state: FSMContext):
+    procedure_specialist = callback.data.split("_")[1]
+    print(procedure_specialist)
 
