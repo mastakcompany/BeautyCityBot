@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Client',
+            name='Clients',
             fields=[
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('is_admin', models.BooleanField(blank=True, default=False, null=True, verbose_name='Администратор')),
             ],
             options={
-                'verbose_name': 'Client',
+                'verbose_name': 'Clients',
                 'verbose_name_plural': 'Clients',
             },
         ),
@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('date', models.DateField(help_text='YYYY-MM-DD', verbose_name='Дата посещения')),
                 ('time_visit', models.IntegerField(choices=[(0, '09:00 – 10:00'), (1, '10:00 – 11:00'), (2, '11:00 – 12:00'), (3, '12:00 – 13:00'), (4, '13:00 – 14:00'), (5, '15:00 – 16:00'), (6, '16:00 – 17:00'), (7, '17:00 – 18:00'), (8, '18:00 – 19:00')], null=True)),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='schedules_user', to='beautycitybot.client', verbose_name='Имя клиента')),
+                ('client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='schedules_user', to='beautycitybot.clients', verbose_name='Имя клиента')),
                 ('master', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='schedule_master', to='beautycitybot.master', verbose_name='Мастер')),
                 ('salon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='schedule_salon', to='beautycitybot.salon', verbose_name='Салон')),
                 ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='schedule_service', to='beautycitybot.service', verbose_name='Услуга')),
