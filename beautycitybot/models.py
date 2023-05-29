@@ -18,7 +18,7 @@ class UUIDMixin(models.Model):
         abstract = True
 
 
-class Client(UUIDMixin, TimeStampedMixin):
+class Clients(UUIDMixin, TimeStampedMixin):
     telegram_id = models.IntegerField(unique=True)
     username = models.CharField(
         max_length=64,
@@ -115,7 +115,7 @@ class Schedule(UUIDMixin, TimeStampedMixin):
     )
     date = models.DateField('Дата посещения', help_text='YYYY-MM-DD')
     time_visit = models.IntegerField(choices=TIMEVISIT_LIST, null=True)
-    client = models.ForeignKey(Client, verbose_name='Имя клиента', on_delete=models.CASCADE,
+    client = models.ForeignKey(Clients, verbose_name='Имя клиента', on_delete=models.CASCADE,
                                related_name='schedules_user')
     salon = models.ForeignKey(Salon, verbose_name='Салон', on_delete=models.CASCADE, related_name='schedule_salon')
     master = models.ForeignKey(Master, verbose_name='Мастер', on_delete=models.CASCADE, related_name='schedule_master')
